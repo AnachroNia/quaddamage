@@ -15,6 +15,7 @@
 #include "scene.h"
 #include "lights.h"
 #include "cxxptl_sdl.h"
+#include "cuda.h"
 
 using std::vector;
 
@@ -494,6 +495,8 @@ void mainloop(void)
 
 const char* DEFAULT_SCENE = "data/hw9/dragon.qdmg";
 
+unsigned Ray::count = 0;
+
 int main ( int argc, char** argv )
 {
 	initRandom(42);
@@ -524,6 +527,7 @@ int main ( int argc, char** argv )
 		renderScene_threaded();
 		Uint32 elapsedMs = SDL_GetTicks() - startTicks;
 		printf("Render took %.2fs\n", elapsedMs / 1000.0f);
+		printf("RayCount: %d", Ray::count);
 		setWindowCaption("Quad Damage: rendered in %.2fs\n", elapsedMs / 1000.0f);
 		
 		displayVFB(vfb);

@@ -192,12 +192,14 @@ enum {
 };
 
 struct Ray {
+	static unsigned count; 
 	Vector start;
 	Vector dir; //!< normed!
 	int depth;
 	int flags;
 	Ray()
 	{
+		count++;
 		depth = 0;
 		flags = 0;
 	}
