@@ -210,26 +210,27 @@ void debugRayTrace(int x, int y)
 	ray.flags |= RF_DEBUG;
 	raytrace(ray);
 }
+inline Ray getRay(double x, double y, int whichCamera){
+	if (scene.camera->dof){
+		return scene.camera->getDOFRay(x, y, whichCamera);
+	}
+	else {
+		return scene.camera->getScreenRay(x, y, whichCamera);
+	}
+}
+
+inline Color trace(const Ray& ray){
+	if (scene.settings.gi){
+		Random& rnd = getRandomGen();
+		return pathtrace(ray, Color(1, 1, 1), rnd);
+	}
+	else {
+		return raytrace(ray);
+	}
+}
 
 Color raytraceSinglePixel(double x, double y)
 {
-	auto getRay = scene.camera->dof ? 
-		[](double x, double y, int whichCamera) {
-			return scene.camera->getDOFRay(x, y, whichCamera);
-		} :
-		[](double x, double y, int whichCamera) {
-			return scene.camera->getScreenRay(x, y, whichCamera);
-		};
-	
-	auto trace = scene.settings.gi ? 
-		[](const Ray& ray) { 
-			Random& rnd = getRandomGen();
-			return pathtrace(ray, Color(1, 1, 1), rnd); 
-		} :
-		[](const Ray& ray) { 
-			return raytrace(ray); 
-		};
-		
 	if (scene.camera->stereoSeparation > 0) {
 		Ray leftRay = getRay(x, y, CAMERA_LEFT);
 		Ray rightRay= getRay(x, y, CAMERA_RIGHT);
@@ -491,7 +492,7 @@ void mainloop(void)
 	}
 }
 
-const char* DEFAULT_SCENE = "data/smallpt.qdmg";
+const char* DEFAULT_SCENE = "data/hw9/dragon.qdmg";
 
 int main ( int argc, char** argv )
 {
