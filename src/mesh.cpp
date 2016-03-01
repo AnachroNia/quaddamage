@@ -74,7 +74,16 @@ void Mesh::buildKD(KDTreeNode* node, BBox bbox, const vector<int>& triangleList,
 		node->initLeaf(triangleList);
 		return;
 	}
-	Axis axis = (Axis) (depth % 3); // TODO: could be better
+
+	double x = fabs(bbox.vmax.x - bbox.vmin.x);
+	double y = fabs(bbox.vmax.y - bbox.vmin.y);
+	double z = fabs(bbox.vmax.z - bbox.vmin.z);
+
+	Axis axis;
+	if (x >= y && x >= z) axis = AXIS_X;
+	if (y >= x && y >= z) axis = AXIS_Y;
+	if (z >= x && z >= y) axis = AXIS_Z;
+
 	double leftLimit = bbox.vmin[axis];
 	double rightLimit = bbox.vmax[axis];
 	

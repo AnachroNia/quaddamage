@@ -6,8 +6,15 @@ GlobalSettings {
 	frameWidth          640
 	frameHeight         480
 	ambientLight (0, 0, 0)
-	lightPos     (-30, 100, -250)
-	lightIntensity    150000
+}
+RectLight l1 {
+	translate  (-30, 100, -250)
+	rotate     (0, 0, 0)
+	color	   (1, 1, 1)
+	power	   20
+	scale (34, 34, 34)
+	xSubd  6
+	ySubd  6
 }
 
 Camera camera {
