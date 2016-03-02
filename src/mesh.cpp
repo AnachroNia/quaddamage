@@ -66,6 +66,157 @@ void Mesh::beginRender()
 	if (normals.size() <= 1) faceted = true;
 }
 
+//!
+// @brief Computes the area of a bounding box by the 2 Vectors that define it.
+//
+inline double calcArea(Vector A, Vector B){
+	double width = fabs(A.x - B.x);
+	double length = fabs(A.y - B.y);
+	double height = fabs(A.z - B.z);
+
+	return (width * length + width * height + height * length) * 2;
+}
+
+double Mesh::calcCost(BBox bbox, double splitPos,const vector<int> &triangleList, const Axis &axis){
+	// Cost = Ct + Ci * (SAl * Nl + Ci + SAr * Nr) / SAparent
+	// Where 
+	// Ct is cost for traversing a node
+	// Ci is triangle intersection cost
+	// SAl, SAr are the areas of left/right bounding boxes
+	// SAparent is the area of the parent bounding box
+	// Nl, Nr are the number of nodes in the left/right bounding box 
+	double Ct = 0.3;
+	double Ci = 1.0;
+
+	int Nl = 0, Nr = 0;
+	for (auto &index : triangleList){
+		const Triangle &T = this->triangles[index];
+
+		const Vector &A = this->vertices[T.v[0]];
+		const Vector &B = this->vertices[T.v[1]];
+		const Vector &C = this->vertices[T.v[2]];
+
+		double leftVertex = min(min(A.v[axis], B.v[axis]), C.v[axis]);
+		double rightVertex = max(max(A.v[axis], B.v[axis]), C.v[axis]);
+
+		if (leftVertex < splitPos) Nl++;
+		if (rightVertex > splitPos) Nr++;
+	}
+
+	Vector A = bbox.vmin; Vector B = bbox.vmax; B[axis] = splitPos;
+	double leftArea = calcArea(A, B);
+
+	A = bbox.vmin; B = bbox.vmax; A[axis] = splitPos;
+	double rightArea = calcArea(A, B);
+
+	double parentArea = calcArea(bbox.vmin, bbox.vmax);
+	
+	return Ct + Ci * (Nl * leftArea + Nr * rightArea) / parentArea;
+}
+
+double Mesh::SAH(BBox bbox, const vector<int>& triangleList, const Axis &axis){
+
+	double left = bbox.vmin[axis];
+	double right = bbox.vmax[axis];
+	double width = right - left;
+	
+	// Finding the optimal splitting plane using Ternary Search and Surface Area Heuristic  
+	double precision = width*1e-6;
+	while (fabs(width) > precision){
+		double leftThird = left + width / 3;
+		double rightThird = right - width / 3;
+		if (calcCost(bbox, leftThird, triangleList, axis) > calcCost(bbox, rightThird, triangleList, axis)){
+			left = leftThird;
+		}
+		else {
+			right = rightThird;
+		}
+		width = right - left;
+	}
+	return (left + right) / 2;
+}
+
+double Mesh::binnedSAH(BBox bbox, const vector<int>& triangleList,const Axis &axis, int binCount){
+	//!
+	// Serial implementation of binned Surface Area Heuristic for computing the optimal split position 
+	// of a bounding box of a KD Tree Node. 
+	// For reference check https://graphics.cg.uni-saarland.de/fileadmin/cguds/Users/cygnus/Danilewsk-GPU-kdTree.pdf
+	//
+
+	vector<int> Lower(binCount, 0.0);
+	vector<int> Higher(binCount, 0.0);
+
+	// Constants for the Cost Function
+	double Ct = 0.3;
+	double Ci = 1.0;
+
+	double width = bbox.vmax[axis] - bbox.vmin[axis];
+	double binWidth = width / binCount;
+
+	for (auto &index : triangleList){
+		const Triangle &T = this->triangles[index];
+
+		const Vector &A = this->vertices[T.v[0]];
+		const Vector &B = this->vertices[T.v[1]];
+		const Vector &C = this->vertices[T.v[2]];
+
+		double left = min(min(A.v[axis], B.v[axis]), C.v[axis]);
+		double right = max(max(A.v[axis], B.v[axis]), C.v[axis]);
+
+		int binIndexLeft = max(min((int)((left - bbox.vmin[axis]) / binWidth), binCount - 1), 0);
+		int binIndexRight = max(min((int)((right - bbox.vmin[axis]) / binWidth), binCount - 1), 0);
+
+		Lower[binIndexLeft]++;
+		Higher[binIndexRight]++;
+	}
+
+	// Compute Prefix Sum for Lower Events and Suffix Sum for Higher Events
+	for (int i = 1; i < binCount; i++){
+		Higher[i] = Higher[i] + Higher[i - 1];
+		Lower[binCount - i - 1] = Lower[binCount - i - 1] + Lower[binCount - i];
+	}
+
+	double optimalSplitPos = 0;
+	double optimalSplitCost = INF;
+	int optimalIndex = 0;
+	for (int i = 0; i < binCount - 1; i++){
+		double splitPos = bbox.vmin[axis] + binWidth*(i + 1);
+
+		Vector A = bbox.vmin;
+		Vector B = bbox.vmax;
+		B[axis] = splitPos;
+
+		double leftArea = calcArea(A, B);
+
+		A = bbox.vmin;
+		B = bbox.vmax;
+		A[axis] = splitPos;
+
+		double rightArea = calcArea(A, B);
+		double parentArea = calcArea(bbox.vmin, bbox.vmax);
+		// Cost = Ct + Ci * (SAl * Nl + Ci + SAr * Nr) / SAparent
+		// Where 
+		// Ct is cost for traversing a node
+		// Ci is triangle intersection cost
+		// SAl, SAr are the areas of left/right bounding boxes
+		// SAparent is the area of the parent bounding box
+		// Nl, Nr are the number of nodes in the left/right bounding box 
+		// Higher[i] = Nl , Lower[i+1] = Nr
+
+		double cost = Ct + Ci * ((leftArea * Higher[i]) + (rightArea * Lower[i + 1])) / parentArea;
+		if (cost < optimalSplitCost){
+			optimalIndex = i;
+			optimalSplitCost = cost;
+			optimalSplitPos = splitPos;
+		}
+	}
+
+	// Early Termination Criteria
+	if (triangleList.size()  < optimalSplitCost) return -1.0;
+
+	return optimalSplitPos;
+}
+
 void Mesh::buildKD(KDTreeNode* node, BBox bbox, const vector<int>& triangleList, int depth)
 {
 	if (depth > MAX_TREE_DEPTH || int(triangleList.size()) < TRIANGLES_PER_LEAF) {
@@ -86,9 +237,27 @@ void Mesh::buildKD(KDTreeNode* node, BBox bbox, const vector<int>& triangleList,
 
 	double leftLimit = bbox.vmin[axis];
 	double rightLimit = bbox.vmax[axis];
-	
-	double optimalSplitPos = (leftLimit + rightLimit) * 0.5; // TODO: could be MUCH better!
-	
+
+	double optimalSplitPos;
+	if (useSAH){
+		if (triangleList.size() > 4096){
+			optimalSplitPos = binnedSAH(bbox, triangleList, axis,128);
+		}
+		else {
+			optimalSplitPos = SAH(bbox, triangleList, axis);
+		}
+	}
+	else {
+		optimalSplitPos = (leftLimit + rightLimit) * 0.5; 
+	}
+
+	if (optimalSplitPos == -1.0){
+		maxDepthSum += depth;
+		numNodes++;
+		node->initLeaf(triangleList);
+		return;
+	}
+
 	BBox bboxLeft, bboxRight;
 	vector<int> trianglesLeft, trianglesRight;
 	

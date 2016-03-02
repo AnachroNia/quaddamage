@@ -93,6 +93,8 @@ Mesh mesh {
 //	file	 	"geom/truncated_cube.obj"
 //	backfaceCulling false
 	faceted     false
+	useKDTree true
+	useSAH true
 }
 
 CheckerTexture checker {

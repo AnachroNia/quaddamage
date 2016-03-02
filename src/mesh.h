@@ -76,6 +76,10 @@ class Mesh: public Geometry {
 	bool intersectTriangle(const RRay& ray, const Triangle& t, IntersectionInfo& info);
 	void buildKD(KDTreeNode* node, BBox bbox, const std::vector<int>& triangleList, int depth);
 	bool intersectKD(KDTreeNode* node, const BBox& bbox, const RRay& ray, IntersectionInfo& info);
+	double binnedSAH(BBox bbox, const std::vector<int>& triangleList, const Axis &axis, int binCount);
+	double SAH(BBox bbox, const std::vector<int>& triangleList, const Axis &axis);
+	double calcCost(BBox bbox, double splitPos, const std::vector<int> &triangleList, const Axis &axis);
+
 public:
 	
 	bool faceted;
