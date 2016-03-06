@@ -1,0 +1,63 @@
+// 1. First, some global settings
+GlobalSettings {
+	frameWidth          768
+	frameHeight         512
+	ambientLight        (0.28, 0.30, 0.35)
+}
+
+// 2. Lights 
+RectLight l1 {
+	translate  (50, 81.33, 81.6)
+	rotate     (0, 0, 0)
+	color	   (1, 1, 1)
+	power	   12
+	scale (34, 34, 34)
+	xSubd  6
+	ySubd  6
+}
+RectLight l2 {
+	translate  (140, 100, 70)
+	rotate     (0, 0, 0)
+	color	   (1, 1, 1)
+	power	   5
+	scale (34, 34, 34)
+	xSubd  6
+	ySubd  6
+}
+// 3. A camera
+Camera camera {
+	position      (140, 23, 70)
+	yaw           66
+	pitch        -10
+	roll          0.0
+	fov           90
+	aspectRatio   1.5
+}
+
+// 4. Geometry
+ImplicitSurface torus {
+	functionsCount 1
+	// https://en.wikipedia.org/wiki/Torus
+	function (3-sqrt(x*x+y*y))^2+z^2-1
+	gridSize (8 8 8)
+	cellSize 1
+	gridStart (-4 -4 -4)
+}
+
+Phong white {
+	color (0.7, 0.7, 0.7)
+	specularExponent 133
+}
+
+Node torusNode {
+	geometry   torus
+	shader     white
+	translate  (104, 13.44, 93)
+	rotate     (90, 90, 0)
+	scale      (30, 30, 30)
+}
+
+// 5. The cubemap environment:
+CubemapEnvironment environment {
+	folder "/env/forest"
+}

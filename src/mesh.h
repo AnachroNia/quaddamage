@@ -59,6 +59,7 @@ struct KDTreeNode {
 };
 
 class Mesh: public Geometry {
+protected: 
 	std::vector<Vector> vertices;
 	std::vector<Vector> normals;
 	std::vector<Vector> uvs;

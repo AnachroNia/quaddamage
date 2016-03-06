@@ -46,6 +46,7 @@
 #include "random_generator.h"
 #include "heightfield.h"
 #include "lights.h"
+#include "implicit_surface.h"
 #include <assert.h>
 using std::vector;
 using std::string;
@@ -873,6 +874,7 @@ SceneElement* DefaultSceneParser::newSceneElement(const char* className)
 	if (!strcmp(className, "Const")) return new Const;
 	if (!strcmp(className, "PointLight")) return new PointLight;
 	if (!strcmp(className, "RectLight")) return new RectLight;
+	if (!strcmp(className, "ImplicitSurface")) return new ImplicitSurface;
 
 	return NULL;
 }
