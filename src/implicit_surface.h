@@ -15,8 +15,6 @@ class ImplicitSurface : public Mesh {
 	Vector gridSize;  // Number of Cells in x,y,z dims
 	double cellSize;  // Using Cube Cells with side - cellSize
 
-	void beginRender();
-
 	void generateMesh();
 
 	void fillProperties(ParsedBlock& pb)

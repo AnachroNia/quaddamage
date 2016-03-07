@@ -493,7 +493,8 @@ void mainloop(void)
 	}
 }
 
-const char* DEFAULT_SCENE = "data/hw9/dragon.qdmg";
+const char* DEFAULT_SCENE = "data/implicit.qdmg";
+//const char* DEFAULT_SCENE = "data/testmesh.qdmg";
 
 unsigned Ray::count = 0;
 
