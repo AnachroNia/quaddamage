@@ -43,12 +43,14 @@ __global__ void Evaluate(float * out, const int * input, const int * types, cons
 	
 	int index = z * (_x * _y) + y*(_x) + x;
 
-	if (index < size){
-		s_types[index] = types[index];
-		s_input[index] = input[index];
+	int shared_index = threadIdx.z * (blockDim.x* blockDim.y) + threadIdx.y*blockDim.x+threadIdx.x;
+	if (shared_index < size){
+		s_types[shared_index] = types[shared_index];
+		s_input[shared_index] = input[shared_index];
 	}
-	if (index < numbers_size){
-		s_numbers[index] = numbers[index];
+
+	if (shared_index < numbers_size){
+		s_numbers[shared_index] = numbers[shared_index];
 	}
 	__syncthreads(); //Shared memory initialized
 
@@ -67,7 +69,7 @@ __global__ void Evaluate(float * out, const int * input, const int * types, cons
 			output_index++;
 		}
 		else if (operation == 2){ // Variable
-			int var = s_input[i];
+			float var = s_input[i];
 			if (var == 0){
 				var = startX + gridCellWidth * x;
 			}
@@ -75,7 +77,7 @@ __global__ void Evaluate(float * out, const int * input, const int * types, cons
 				var = startY + gridCellWidth * y;
 			}
 			else if (var == 2){
-				var = startZ + gridCellWidth * z; //Shouldn't be used... 
+				var = startZ + gridCellWidth * z; 
 			}
 			else if (var == 3){
 				//TODO - time implementation 
@@ -90,7 +92,8 @@ __global__ void Evaluate(float * out, const int * input, const int * types, cons
 		}
 		else if (operation == 3){ //Operator
 			int op = s_input[i];
-			int it = operators[operators_index - 1];
+			int it = 0;
+			if(operators_index > 0 ) it = operators[operators_index - 1];
 			while (operators_index > 0 && s_types[it] == 3 && op <= s_input[it]){
 					if (s_input[it] == 0){ //+
 						output[output_index - 2] += output[output_index - 1];
