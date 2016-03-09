@@ -81,6 +81,7 @@ cos(cos(x)+cos(y))+z
 sqrt(sqrt((cos(x)+cos(y))^2))+z
 ```
 > (When you haven't implemented abs function)
+
 - Mesh generated in 0.28s (3446 triangles) (31x31x31)
 - KDTree built in 0.28s (average depth 11.0)
 - Render took 8.89s
