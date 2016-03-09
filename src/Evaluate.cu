@@ -35,12 +35,9 @@ __global__ void Evaluate(float * out, const int * input, const int * types, cons
 	float * s_numbers = (float *)&s_input[size];
 	
 	int x = blockIdx.x * blockDim.x + threadIdx.x;
-	if (x >= _x) return;
 	int y = blockIdx.y * blockDim.y + threadIdx.y;
-	if (y >= _y) return;
 	int z = blockIdx.z * blockDim.z + threadIdx.z;
-	if (z >= _z) return;
-	
+
 	int index = z * (_x * _y) + y*(_x) + x;
 
 	int shared_index = threadIdx.z * (blockDim.x* blockDim.y) + threadIdx.y*blockDim.x+threadIdx.x;
@@ -53,6 +50,8 @@ __global__ void Evaluate(float * out, const int * input, const int * types, cons
 		s_numbers[shared_index] = numbers[shared_index];
 	}
 	__syncthreads(); //Shared memory initialized
+
+	if (x >= _x || y >= _y || z >= _z) return;
 
 #define CU_ARRAY_SIZE 24 //On Kepler you have only 64 registers per thread - gotta be sparing 
 	// Output Queue for Shunting Yard Algorithm
