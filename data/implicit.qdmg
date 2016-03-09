@@ -8,7 +8,7 @@ GlobalSettings {
 
 // 2. Lights 
 RectLight l1 {
-	translate  (50, 81.33, 81.6)
+	translate  (-40, 120, -55)
 	rotate     (0, 0, 0)
 	color	   (1, 1, 1)
 	power	   12
@@ -17,10 +17,19 @@ RectLight l1 {
 	ySubd  6
 }
 RectLight l2 {
-	translate  (140, 100, 70)
+	translate  (60, 80, 70)
 	rotate     (0, 0, 0)
 	color	   (1, 1, 1)
 	power	   5
+	scale (34, 34, 34)
+	xSubd  6
+	ySubd  6
+}
+RectLight l3 {
+	translate  (0, 120, 0)
+	rotate     (0, 0, 0)
+	color	   (1, 1, 1)
+	power	   3
 	scale (34, 34, 34)
 	xSubd  6
 	ySubd  6
@@ -31,35 +40,65 @@ Camera camera {
 	yaw           0
 	pitch        -90
 	roll          0.0
-	fov           90
+	fov           120
 	aspectRatio   1.5
 }
 
-// 4. Geometry
+// 4. Geometry 
 ImplicitSurface torus {
 	functionsCount 1
 	// https://en.wikipedia.org/wiki/Torus
-	function (2-sqrt(x*x+y*y))^2+z^2-1
+	//function (5-sqrt(x*x+y*y))^2+z^2-4
+	//function x*x+y*y+z*z-9
+	//function 2*y*(y^2-3*x^2)*(1-z^2)+(x^2+y^2)^2-(9*z^2-1)*(1-z^2)
+	//function sin(x)+sin(y)+sin(z)
+	//function x%2+y%3+z*z-1+cos(x)*sin(y)*2  
+	function 1+sin(x)*cos(y)-1/sqrt(z)
+	//function x*x+y*y*cos(y)+z*z-1
+	// http://mathworld.wolfram.com/GoursatsSurface.html
+	//function x^4+y^4+z^4-1.5*(x^2+y^2+z^2)+1
+	//heart
+	//function (2*x*x+y*y+2*z*z-1)^3-0.1*z*z*y*y*y-y*y*y*x*x
 	//function x*x+y*y+z*z-1
 	useKDTree true
 	backfaceCulling false
 	useSAH true
-	gridSize (16 16 16)
-	cellSize 0.5
-	gridStart (-4 -4 -4)
-}
+	gridSize (128 128 128)
+	cellSize 0.125
+	gridStart (-8 -8 -8)
+} 
 
 Phong white {
 	color (0.7, 0.7, 0.7)
 	specularExponent 133
 }
+NormalToColor colorful {
+}
+Lambert diffuse {
+	texture colorful
+	color (0.7, 0.7, 0.7)
+}
+
+Refl mirror {
+}
+
+Fresnel mirror_fresnel {
+	ior 1.33
+}
+
+
+Layered disco_ball {
+	layer diffuse (1, 1, 1)
+	layer mirror        (0.05, 0.05, 0.05) mirror_fresnel
+}
+
 
 Node torusNode {
 	geometry   torus
-	shader     white
+	shader     disco_ball
 	translate  (0, 0, 0)
 	rotate     (90, 90, 0)
-	scale      (10, 10, 10)
+	scale      (12, 12, 12)
 }
 
 // 5. The cubemap environment:

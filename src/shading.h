@@ -69,6 +69,13 @@ public:
 	}
 };
 
+class NormalToColor : public Texture {
+public:
+	NormalToColor(){}
+	virtual Color sample(const IntersectionInfo& info);
+	void fillProperties(ParsedBlock& pb){}
+};
+
 class Bitmap;
 class BitmapTexture: public Texture {
 	Bitmap* bitmap;

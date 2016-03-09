@@ -50,6 +50,9 @@ Color CheckerTexture::sample(const IntersectionInfo& info)
 	Color checkerColor = ((x + y) % 2 == 0) ? color1 : color2;
 	return checkerColor;
 }
+Color NormalToColor::sample(const IntersectionInfo& info){
+	return Color((info.normal.x+1)/2, (info.normal.y+1)/2, (info.normal.z+1)/2);
+}
 
 Color getLightContrib(const IntersectionInfo& info, const Vector& lightPos, const Color& lightColor)
 {

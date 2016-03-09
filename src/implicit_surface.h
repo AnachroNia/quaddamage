@@ -7,6 +7,7 @@
 #include "Evaluate.h"
 #include <vector>
 #include <string>
+#include <SDL/SDL.h>
 
 class ImplicitSurface : public Mesh {
 	int functionsCount;
@@ -37,8 +38,14 @@ class ImplicitSurface : public Mesh {
 		pb.getBoolProp("useSAH", &useSAH);
 		pb.getBoolProp("autoSmooth", &autoSmooth);
 
+
+		Uint32 startBuild = SDL_GetTicks();
 		// Marching Cubes
 		generateMesh();
+		Uint32 endBuild = SDL_GetTicks();
+		printf(" -> Mesh generated in %.2lfs\n", (endBuild - startBuild) / 1000.0);
+
+
 	}
 };
 

@@ -875,6 +875,7 @@ SceneElement* DefaultSceneParser::newSceneElement(const char* className)
 	if (!strcmp(className, "PointLight")) return new PointLight;
 	if (!strcmp(className, "RectLight")) return new RectLight;
 	if (!strcmp(className, "ImplicitSurface")) return new ImplicitSurface;
+	if (!strcmp(className, "NormalToColor")) return new NormalToColor;
 
 	return NULL;
 }
