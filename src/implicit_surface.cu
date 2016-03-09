@@ -387,7 +387,10 @@ __global__ void marchingCubes(const float * vertexValues, const int * eTable, co
 
 //Linear Interpolation between 2 Points 
 Vector VertexInterpolation(Vector A, Vector B, double a, double b){
-	return (A + (-a / (b - a))* (B - A));
+	if (fabs(b-a) > 0.00001)
+		return (A + (-a / (b - a))* (B - A));
+	else
+		return A;
 }
 
 void ImplicitSurface::generateMesh(){
@@ -447,7 +450,7 @@ void ImplicitSurface::generateMesh(){
 		cudaMemcpy(vertexValues, d_output, output_size, cudaMemcpyDeviceToHost);
 		gpuErrchk(cudaPeekAtLastError());
 		gpuErrchk(cudaDeviceSynchronize());
-
+		
 		for (int i = 0; i < gridZ-1; i++){
 			for (int j = 0; j < gridY-1; j++){
 				for (int k = 0; k < gridX-1; k++){

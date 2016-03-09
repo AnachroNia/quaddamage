@@ -45,6 +45,46 @@ x^4+y^4+z^4-1.5*(x^2+y^2+z^2)+1
 
 ![5](images/5.jpg?raw=true)
 
+```
+1+cos(x)+cos(y)+cos(z)
+```
+- Mesh generated in 0.26s (11388 triangles) (32x32x32)
+- KDTree built in 0.60s (average depth 13.9)
+- Render took 59.82s
+![7](images/7.jpg?raw=true)
+
+```
+sin(x)+sin(y)+sin(z)
+```
+- Mesh generated in 0.30s (20034 triangles) (32x32x32)
+- KDTree built in 1.03s (average depth 14.7)
+- Render took 87.02s
+![8](images/8.jpg?raw=true)
+
+```
+cos(x)+cos(y)+z
+```
+- Mesh generated in 0.29s (4338 triangles) (31x31x31)
+- KDTree built in 0.50s (average depth 11.5)
+- Render took 17.41s
+![9](images/9.jpg?raw=true)
+
+```
+cos(cos(x)+cos(y))+z
+```
+- Mesh generated in 0.18s (2930 triangles) (31x31x31)
+- KDTree built in 0.19s (average depth 10.3)
+- Render took 10.08s
+![10](images/10.jpg?raw=true)
+
+```
+sqrt(sqrt((cos(x)+cos(y))^2))+z
+```
+> (When you haven't implemented abs function)
+- Mesh generated in 0.28s (3446 triangles) (31x31x31)
+- KDTree built in 0.28s (average depth 11.0)
+- Render took 8.89s
+![11](images/11.jpg?raw=true)
 
 
 
