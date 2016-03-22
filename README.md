@@ -1,3 +1,24 @@
+#What is added by me
+[in src/mesh.cpp](src/mesh.cpp)
+```c++
+double Mesh::binnedSAH(BBox bbox, const vector<int>& triangleList,const Axis &axis, int binCount)
+double Mesh::SAH(BBox bbox, const vector<int>& triangleList, const Axis &axis)
+double Mesh::calcCost(BBox bbox, double splitPos,const vector<int> &triangleList, const Axis &axis)
+inline double calcArea(Vector A, Vector B)
+```
+Modified BuildKD to split on it's longest axis and to use a combination of 'SAH' and 'binned SAH'
+
+[src/Expression.cpp](src/Expression.cpp) / [src/Expression.h](src/Expression.h)
+A simple class that reads a math expression from string and serialize it in arrays for processing by [Evaluate.cu](src/Evaluate.cu)
+
+[src/Evaluate.cu](src/Evaluate.cu) / [src/Evaluate.h](src/Evaluate.h)
+A CUDA kernel that takes it's input from the Expression class and uses the Shunting yard algorithm to Evaluate the values of a function in points of a grid
+
+[src/implicit_surface.cu](src/implicit_surface.cu) / [src/implicit_surface.h](src/implicit_surface.h) 
+An implementation of the Marching Cubes algorithm - it uses Evaluate to compute the values of the function in a grid and uses these values to build a mesh
+
+Note: To compile the project you need NVIDIA GPU Computing Toolkit v6.5
+
 # quaddamage
 
 Another C++ raytracer for the v4 FMI raytracing course.
@@ -14,3 +35,6 @@ On Windows:
 On Linux and Mac OS X:
 ----------------------
    run scripts/downloda_sdk.py, and follow the instructions.
+
+
+----------------------
