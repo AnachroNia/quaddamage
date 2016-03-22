@@ -21,6 +21,8 @@ An implementation of the Marching Cubes algorithm - it uses Evaluate to compute 
 
 Note: To compile the project you need NVIDIA GPU Computing Toolkit v6.5
 
+You can see some demos in [implicit_surfaces.md](implicit_surfaces.md) - including images, times to generate mesh and kd tree and render time (Tested on Geforce GT640M and i7-3630QM (Turbo boost disabled - 2,4Ghz))
+
 # quaddamage
 
 Another C++ raytracer for the v4 FMI raytracing course.
