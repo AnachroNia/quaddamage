@@ -60,13 +60,16 @@ ImplicitSurface torus {
 	//heart
 	//function (2*x*x+y*y+2*z*z-1)^3-0.1*z*z*y*y*y-y*y*y*x*x
 	//function x*x+y*y*cos(y)+z*z-1
-	function sqrt(sqrt((cos(x)+cos(y))^2))+z
+	//function sqrt(sqrt((cos(x)+cos(y))^2))+z
+	//Clebsch Surface 
+	//function 81*(x^3+y^3+z^3)-189*((x^2)*y+(x^2)*z+(y^2)*x+(y^2)*z+(z^2)*x+(z^2)*y)+54*x*y*z+126*(x*y+x*z+y*z)-9*(x^2+y^2+z^2)-9*(x+y+z)+1
+	function 3*x^2+2*y^3-5*z-0.5	
 	useKDTree true
 	backfaceCulling false
 	useSAH true
-	gridSize (127 127 127)
+	gridSize (32 32 32)
 	cellSize 0.125
-	gridStart (-8 -8 -8)
+	gridStart (-2 -2 -2)
 } 
 
 Phong white {
@@ -98,8 +101,8 @@ Node torusNode {
 	geometry   torus
 	shader     disco_ball
 	translate  (0, 0, 0)
-	rotate     (90, 90, 0)
-	scale      (8, 8, 8)
+	rotate     (90, 90, 30)
+	scale      (40, 40, 40)
 }
 
 // 5. The cubemap environment:

@@ -1,10 +1,12 @@
 #What is added by me
+--------------------
+**All changes are in branch "Implicit-Surface"**
 [in src/mesh.cpp](src/mesh.cpp)
 ```c++
-double Mesh::binnedSAH(BBox bbox, const vector<int>& triangleList,const Axis &axis, int binCount)
-double Mesh::SAH(BBox bbox, const vector<int>& triangleList, const Axis &axis)
-double Mesh::calcCost(BBox bbox, double splitPos,const vector<int> &triangleList, const Axis &axis)
-inline double calcArea(Vector A, Vector B)
+double Mesh::binnedSAH(BBox bbox, const vector<int>& triangleList,const Axis &axis, int binCount);
+double Mesh::SAH(BBox bbox, const vector<int>& triangleList, const Axis &axis);
+double Mesh::calcCost(BBox bbox, double splitPos,const vector<int> &triangleList, const Axis &axis);
+inline double calcArea(Vector A, Vector B);
 ```
 Modified BuildKD to split on it's longest axis and to use a combination of 'SAH' and 'binned SAH'
 
